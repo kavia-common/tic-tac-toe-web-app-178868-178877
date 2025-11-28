@@ -1,15 +1,78 @@
 /* Ocean Professional Theme */
+/* Consolidated design tokens via CSS variables for better reuse and consistency */
 :root {
-  --primary: #2563EB;     /* blue */
-  --secondary: #F59E0B;   /* amber */
+  /* Core palette */
+  --primary: #2563EB;
+  --secondary: #F59E0B;
   --error: #EF4444;
-  --bg: #f9fafb;          /* background */
-  --surface: #ffffff;     /* panel surface */
-  --text: #111827;        /* slate-900 */
-  --muted: #6b7280;       /* slate-500 */
-  --ring: rgba(37, 99, 235, 0.35);
-  --shadow: 0 10px 20px rgba(31, 41, 55, 0.08), 0 2px 6px rgba(31, 41, 55, 0.06);
+
+  /* Surfaces */
+  --bg: #f9fafb;
+  --surface: #ffffff;
+
+  /* Text */
+  --text: #111827;
+  --muted: #6b7280;
+
+  /* Radii */
   --radius: 16px;
+  --radius-sm: 12px;
+  --radius-xs: 10px;
+  --pill: 999px;
+
+  /* Shadows and focus ring */
+  --shadow-color: 31, 41, 55; /* slate-800 as RGB */
+  --shadow-sm: 0 2px 6px rgba(var(--shadow-color), 0.06);
+  --shadow-md: 0 10px 20px rgba(var(--shadow-color), 0.08), var(--shadow-sm);
+  --ring-color: 37, 99, 235; /* primary as RGB */
+  --ring-alpha: 0.35;
+  --ring: rgba(var(--ring-color), var(--ring-alpha));
+
+  /* Gradients */
+  --grad-surface-top: #ffffff;
+  --grad-surface-bottom: #f8fafc;
+  --grad-surface-bottom-filled: #f3f4f6;
+  --grad-primary-top: rgba(37,99,235,1);
+  --grad-primary-bottom: rgba(37,99,235,0.92);
+  --grad-secondary-top: rgba(245,158,11,1);
+  --grad-secondary-bottom: rgba(245,158,11,0.92);
+
+  /* Borders */
+  --border-base: rgba(17, 24, 39, 0.08);
+  --border-surface: rgba(17, 24, 39, 0.06);
+  --border-info: rgba(37, 99, 235, 0.25);
+  --border-success: rgba(245, 158, 11, 0.25);
+  --border-neutral: rgba(107, 114, 128, 0.25);
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-1-5: 6px;
+  --space-2: 8px;
+  --space-2-5: 10px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+
+  /* Motion */
+  --easing: ease;
+  --dur-quick: 160ms;
+  --dur-fast: 180ms;
+  --dur-mid: 220ms;
+}
+
+/* Respect system reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-quick: 0ms;
+    --dur-fast: 0ms;
+    --dur-mid: 0ms;
+  }
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 * { box-sizing: border-box; }
@@ -21,15 +84,26 @@ html, body, #root {
 body {
   margin: 0;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  background: linear-gradient(180deg, rgba(59,130,246,0.10), rgba(249,250,251,1));
+  background: linear-gradient(180deg, rgba(59,130,246,0.10), var(--bg));
   color: var(--text);
 }
 
+/* Strong, accessible focus-visible styles */
+:where(button, a, [tabindex])\:focus-visible,
+button:focus-visible,
+a:focus-visible,
+.ttt-square:focus-visible,
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--ring), var(--shadow-md);
+}
+
+/* Container and layout */
 .ocean-app {
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 24px;
+  padding: var(--space-4);
 }
 
 .ocean-container {
@@ -37,8 +111,9 @@ body {
   max-width: 720px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-4);
   align-items: stretch;
+  padding-inline: var(--space-1); /* micro padding to prevent edge overflow on tiny screens */
 }
 
 .ocean-header {
@@ -53,61 +128,64 @@ body {
 }
 
 .ocean-subtitle {
-  margin: 6px 0 0 0;
+  margin: var(--space-1-5) 0 0 0;
   color: var(--muted);
   font-size: 14px;
 }
 
+/* Surface card */
 .ocean-surface {
   background: var(--surface);
   border-radius: var(--radius);
-  padding: 20px;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(17, 24, 39, 0.06);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-surface);
 }
 
+/* Status row */
 .status-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
-  gap: 10px;
+  margin-bottom: var(--space-3);
+  gap: var(--space-2-5);
 }
 
 .status-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   font-weight: 600;
-  padding: 8px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(17, 24, 39, 0.08);
-  background: linear-gradient(180deg, #fff, #fafafa);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--pill);
+  border: 1px solid var(--border-base);
+  background: linear-gradient(180deg, var(--grad-surface-top), #fafafa);
   color: var(--text);
 }
 
 .status-badge--info {
-  border-color: rgba(37, 99, 235, 0.25);
-  background: linear-gradient(180deg, rgba(59,130,246,0.06), #ffffff);
+  border-color: var(--border-info);
+  background: linear-gradient(180deg, rgba(59,130,246,0.06), var(--surface));
   color: var(--primary);
 }
 
 .status-badge--success {
-  border-color: rgba(245, 158, 11, 0.25);
-  background: linear-gradient(180deg, rgba(245,158,11,0.08), #ffffff);
+  border-color: var(--border-success);
+  background: linear-gradient(180deg, rgba(245,158,11,0.08), var(--surface));
   color: var(--secondary);
 }
 
 .status-badge--neutral {
-  border-color: rgba(107, 114, 128, 0.25);
-  background: linear-gradient(180deg, rgba(107,114,128,0.10), #ffffff);
+  border-color: var(--border-neutral);
+  background: linear-gradient(180deg, rgba(107,114,128,0.10), var(--surface));
   color: var(--muted);
 }
 
+/* Turn indicator */
 .turn-indicator {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   color: var(--muted);
   font-weight: 600;
 }
@@ -115,38 +193,35 @@ body {
 .turn-indicator .dot {
   width: 10px;
   height: 10px;
-  border-radius: 999px;
-  box-shadow: inset 0 0 0 2px #fff, 0 0 0 2px rgba(17, 24, 39, 0.08);
+  border-radius: var(--pill);
+  box-shadow: inset 0 0 0 2px #fff, 0 0 0 2px var(--border-base);
 }
 
 .dot--x { background: var(--primary); }
 .dot--o { background: var(--secondary); }
 
+/* Board */
 .ttt-board {
   width: min(92vw, 440px);
   aspect-ratio: 1 / 1;
-  margin: 10px auto 16px auto;
+  margin: var(--space-2-5) auto var(--space-4) auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: var(--space-2-5);
 }
 
+/* Square */
 .ttt-square {
-  background: linear-gradient(180deg, #ffffff, #f8fafc);
-  border: 1px solid rgba(17, 24, 39, 0.08);
+  background: linear-gradient(180deg, var(--grad-surface-top), var(--grad-surface-bottom));
+  border: 1px solid var(--border-base);
   border-radius: 14px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-md);
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition: transform 180ms ease, box-shadow 220ms ease, background 220ms ease, border-color 220ms ease;
+  transition: transform var(--dur-fast) var(--easing), box-shadow var(--dur-mid) var(--easing), background var(--dur-mid) var(--easing), border-color var(--dur-mid) var(--easing);
   user-select: none;
   padding: 0;
-}
-
-.ttt-square:focus {
-  outline: none;
-  box-shadow: 0 0 0 4px var(--ring), var(--shadow);
 }
 
 .ttt-square:hover {
@@ -159,14 +234,15 @@ body {
 }
 
 .ttt-square--filled {
-  background: linear-gradient(180deg, #ffffff, #f3f4f6);
+  background: linear-gradient(180deg, var(--grad-surface-top), var(--grad-surface-bottom-filled));
 }
 
 .ttt-square--win {
   border-color: rgba(245, 158, 11, 0.45);
-  background: linear-gradient(180deg, rgba(245,158,11,0.12), #fff);
+  background: linear-gradient(180deg, rgba(245,158,11,0.12), var(--surface));
 }
 
+/* Symbols */
 .ttt-square__symbol {
   font-size: clamp(40px, 10vw, 68px);
   font-weight: 800;
@@ -183,28 +259,25 @@ body {
   text-shadow: 0 6px 18px rgba(245, 158, 11, 0.25);
 }
 
+/* Controls */
 .controls {
   display: flex;
-  gap: 10px;
+  gap: var(--space-2-5);
   justify-content: center;
-  margin-top: 4px;
+  margin-top: var(--space-1);
+  flex-wrap: wrap; /* allow wrap on very small screens to avoid overflow */
 }
 
 .btn {
   appearance: none;
   border: 1px solid transparent;
-  border-radius: 12px;
-  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2-5) var(--space-4);
   font-weight: 700;
   letter-spacing: 0.01em;
   cursor: pointer;
-  transition: transform 160ms ease, box-shadow 220ms ease, background 220ms ease, border-color 220ms ease, color 220ms ease;
-  box-shadow: var(--shadow);
-}
-
-.btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 4px var(--ring), var(--shadow);
+  transition: transform var(--dur-quick) var(--easing), box-shadow var(--dur-mid) var(--easing), background var(--dur-mid) var(--easing), border-color var(--dur-mid) var(--easing), color var(--dur-mid) var(--easing);
+  box-shadow: var(--shadow-md);
 }
 
 .btn:active {
@@ -212,8 +285,8 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(180deg, rgba(37,99,235,1), rgba(37,99,235,0.92));
-  color: white;
+  background: linear-gradient(180deg, var(--grad-primary-top), var(--grad-primary-bottom));
+  color: #ffffff;
   border-color: rgba(37, 99, 235, 0.9);
 }
 
@@ -223,8 +296,8 @@ body {
 }
 
 .btn-secondary {
-  background: linear-gradient(180deg, rgba(245,158,11,1), rgba(245,158,11,0.92));
-  color: #111827;
+  background: linear-gradient(180deg, var(--grad-secondary-top), var(--grad-secondary-bottom));
+  color: var(--text);
   border-color: rgba(245, 158, 11, 0.9);
 }
 
@@ -233,34 +306,50 @@ body {
   transform: translateY(-1px);
 }
 
+/* Explicit strong :focus-visible for buttons too (in addition to global rule) */
+.btn:focus-visible,
+.ttt-square:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--ring), var(--shadow-md);
+}
+
+/* Footer */
 .ocean-footer {
   text-align: center;
   color: var(--muted);
-  margin-top: 6px;
+  margin-top: var(--space-1-5);
 }
 
 .env-hint {
   display: inline-block;
-  padding: 6px 10px;
-  border-radius: 999px;
+  padding: var(--space-1-5) var(--space-3);
+  border-radius: var(--pill);
   background: rgba(17, 24, 39, 0.04);
-  border: 1px solid rgba(17, 24, 39, 0.06);
+  border: 1px solid var(--border-surface);
 }
 
 /* Small screens */
 @media (max-width: 480px) {
   .ocean-surface {
-    padding: 16px;
+    padding: var(--space-4);
     border-radius: 14px;
   }
   .btn {
-    padding: 10px 14px;
+    padding: var(--space-2-5) var(--space-3);
   }
   .status-row {
     flex-direction: column;
     align-items: stretch;
+    gap: var(--space-2);
   }
   .turn-indicator {
     justify-content: center;
+  }
+  .ttt-board {
+    width: min(94vw, 420px); /* a bit more breathing space on tiny screens */
+    gap: var(--space-2);
+  }
+  .ocean-container {
+    padding-inline: var(--space-2); /* increase side padding slightly to avoid edge collisions */
   }
 }
